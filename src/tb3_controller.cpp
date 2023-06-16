@@ -8,6 +8,8 @@ Tb3Controller::Tb3Controller()
 {
   this->declare_parameter<std::float_t>("Kp", 0.1);
   this->get_parameter("Kp", Kp_);
+
+  xd_ = 0.0;
   
   xd_sub_ = this->create_subscription<std_msgs::msg::Float32>(
     "/xd", rclcpp::QoS(10), std::bind(&Tb3Controller::xd_callback, this, _1));
@@ -22,14 +24,14 @@ Tb3Controller::Tb3Controller()
 
 Tb3Controller::~Tb3Controller()
 {
-  auto message = geometry_msgs::msg::Twist();
-  message.linear.x = 0.0;
-  message.angular.z = 0.0;
-  cmd_vel_pub_->publish(message);
+  auto node = rclcpp::Node::make_shared("stop");
+  // auto pub = node->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", 10);
+  // auto message = geometry_msgs::msg::Twist();
+  // pub->publish(message);
   RCLCPP_INFO(this->get_logger(), "tb3_controller node has been terminated");
 }
 
-void Tb3Controller::desired_val_callback(std_msgs::msg::Float32::SharedPtr msg){
+void Tb3Controller::xd_callback(std_msgs::msg::Float32::SharedPtr msg){
   xd_ = msg->data;
 }
 
@@ -37,7 +39,8 @@ void Tb3Controller::scan_callback(sensor_msgs::msg::LaserScan::SharedPtr msg){
   auto point_count = msg->ranges.size();
   auto x = msg->ranges[point_count/2];
   auto message = geometry_msgs::msg::Twist();
-  message.linear.x = - Kp_ * (x - xd_);
+  // message.linear.x = - Kp_ * (x - xd_);
+  message.linear.x = 0.3;
   message.angular.z = 0.0;
   cmd_vel_pub_->publish(message);
 }
@@ -46,11 +49,12 @@ void Tb3Controller::odom_callback(nav_msgs::msg::Odometry::SharedPtr msg){
   current_pose_ = msg->pose.pose;
 }
 
-
 int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
-  rclcpp::spin(std::make_shared<Tb3Controller>());
+  auto node = std::make_shared<Tb3Controller>();
+  rclcpp::spin(node);
+  // rclcpp::spin_some(node);
   rclcpp::shutdown();
   return 0;
 }

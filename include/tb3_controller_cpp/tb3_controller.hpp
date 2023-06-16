@@ -26,7 +26,7 @@ private:
   rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub_;
 
   rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr xd_sub_;
-  void desired_val_callback(std_msgs::msg::Float32::SharedPtr msg);
+  void xd_callback(std_msgs::msg::Float32::SharedPtr msg);
   
   rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr scan_sub_;
   void scan_callback(sensor_msgs::msg::LaserScan::SharedPtr msg);

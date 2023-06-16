@@ -34,8 +34,7 @@ private:
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
   void odom_callback(nav_msgs::msg::Odometry::SharedPtr msg);
 
-  geometry_msgs::msg::Pose current_pose_;
-
   float Kp_;
   float xd_;
+  geometry_msgs::msg::Pose current_pose_;
 };

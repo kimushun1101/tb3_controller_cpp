@@ -9,7 +9,7 @@ Tb3Controller::Tb3Controller()
   this->declare_parameter<std::float_t>("Kp", 0.1);
   this->get_parameter("Kp", Kp_);
 
-  xd_ = 0.0;
+  xd_ = 3.0;
   
   xd_sub_ = this->create_subscription<std_msgs::msg::Float32>(
     "/xd", rclcpp::QoS(10), std::bind(&Tb3Controller::xd_callback, this, _1));
@@ -24,10 +24,7 @@ Tb3Controller::Tb3Controller()
 
 Tb3Controller::~Tb3Controller()
 {
-  auto node = rclcpp::Node::make_shared("stop");
-  // auto pub = node->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", 10);
-  // auto message = geometry_msgs::msg::Twist();
-  // pub->publish(message);
+  cmd_vel_pub_->publish(geometry_msgs::msg::Twist()); // Unfortunately, it does not work.
   RCLCPP_INFO(this->get_logger(), "tb3_controller node has been terminated");
 }
 
@@ -49,12 +46,19 @@ void Tb3Controller::odom_callback(nav_msgs::msg::Odometry::SharedPtr msg){
   current_pose_ = msg->pose.pose;
 }
 
+
 int main(int argc, char * argv[])
 {
+  signal(SIGINT, [](int){
+    auto node = rclcpp::Node::make_shared("stop");
+    auto pub = node->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", 10);
+    pub->publish(geometry_msgs::msg::Twist());
+    rclcpp::shutdown();
+  });
+  
   rclcpp::init(argc, argv);
   auto node = std::make_shared<Tb3Controller>();
   rclcpp::spin(node);
-  // rclcpp::spin_some(node);
   rclcpp::shutdown();
   return 0;
 }

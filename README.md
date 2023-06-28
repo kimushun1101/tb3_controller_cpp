@@ -38,8 +38,14 @@ Turtlebot3に制御則を実装するパッケージ。
     cd ~/ros2_ws/src
     source install/setup.bash
     export TURTLEBOT3_MODEL=burger
+    export LIBGL_ALWAYS_SOFTWARE=1
     ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
    ```
+   初回はエラーが出てロボットモデルが出ないが、Ctrl+Cで一度閉じ、再度
+    ```
+    ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
+    ```
+    すると正しく起動する。
 7. 別のターミナルで制御を開始する。
     ```
     cd ~/ros2_ws/src

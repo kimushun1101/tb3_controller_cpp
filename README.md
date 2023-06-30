@@ -25,17 +25,17 @@ Turtlebot3に制御則を実装するパッケージ。
    ```
     sudo rosdep init
     rosdep update
-    cd ~/ros2_ws/src
+    cd ~/ros2_ws
     rosdep install -y --from-paths src
    ```
 5. ビルドする。
    ```
-    cd ~/ros2_ws/src
+    cd ~/ros2_ws
     colcon build
    ```
 6. シミュレータを起動する。
    ```
-    cd ~/ros2_ws/src
+    cd ~/ros2_ws
     source install/setup.bash
     export TURTLEBOT3_MODEL=burger
     export LIBGL_ALWAYS_SOFTWARE=1
@@ -52,3 +52,9 @@ Turtlebot3に制御則を実装するパッケージ。
     source install/setup.bash
     ros2 run tb3_controller_cpp tb3_controller_cpp
    ```
+
+## 編集方法
+
+上記の方法で環境構築をすると、
+ソースファイルは`~/ros2_ws/src/tb3_controller_cpp/src/tb3_controller.cpp`
+に置かれる。

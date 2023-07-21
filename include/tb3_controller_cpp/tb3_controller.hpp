@@ -10,7 +10,6 @@ class Tb3Controller : public rclcpp::Node
 {
 public:
   Tb3Controller();
-  ~Tb3Controller();
 
 private:
   rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub_;

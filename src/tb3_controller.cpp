@@ -31,12 +31,6 @@ Tb3Controller::Tb3Controller()
   RCLCPP_INFO(this->get_logger(), "tb3_controller node has been initialised");
 }
 
-Tb3Controller::~Tb3Controller()
-{
-  cmd_vel_pub_->publish(geometry_msgs::msg::Twist()); // Unfortunately, it does not work.
-  RCLCPP_INFO(this->get_logger(), "tb3_controller node has been terminated");
-}
-
 void Tb3Controller::xd_callback(std_msgs::msg::Float32::SharedPtr msg)
 {
   xd_ = msg->data;
@@ -53,14 +47,10 @@ void Tb3Controller::timer_callback() //ここにコントローラを設計し�
 //, geometry_msgs::msg::Twist::SharedPtr msg1
 void Tb3Controller::scan_callback(sensor_msgs::msg::LaserScan::SharedPtr msg) // 速度Dと積分Iをどうやって実装すればよいのか？->callback関数の中でコントローラを組むのは不可能？
 {
-  auto point_count = msg->ranges.size();
-  auto x = msg->ranges[point_count / 2];
-  x_ = msg->ranges[point_count / 2];
-  auto message = geometry_msgs::msg::Twist();
-  message.linear.x = -Kp_ * (x - xd_);
-  // message.linear.x = 0.3;
-  message.angular.z = 0.0;
-  // cmd_vel_pub_->publish(message);
+  x_ = msg->ranges[0];  // 正面の距離を計測
+  // 背面の距離を計測したい場合
+  // auto point_count = msg->ranges.size();
+  // x_ = msg->ranges[point_count / 2];
 }
 
 void Tb3Controller::odom_callback(nav_msgs::msg::Odometry::SharedPtr msg)

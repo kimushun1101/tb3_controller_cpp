@@ -23,7 +23,7 @@ find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_auto REQUIRED)
 ament_auto_find_build_dependencies()
 
-ament_auto_add_executable(tb3_controller_cpp src/tb3_controller.cpp)
+ament_auto_add_executable(tb3_controller_node DIRECTORY src)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

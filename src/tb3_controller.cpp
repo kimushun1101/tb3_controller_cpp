@@ -16,7 +16,7 @@
 
 Tb3Controller::Tb3Controller() : Node("tb3_controller")
 {
-  this->declare_parameter<std::float_t>("init_xd", 3.0);
+  this->declare_parameter<std::float_t>("init_xd", 1.0);
   this->get_parameter("init_xd", xd_);
   this->declare_parameter<std::float_t>("Kp", 1.0);
   this->get_parameter("Kp", Kp_);

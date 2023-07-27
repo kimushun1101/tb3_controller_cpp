@@ -37,7 +37,6 @@ Turtlebot3に制御則を実装するパッケージ．
 
 1. シミュレータを起動する．
    ```
-   source /opt/ros/$ROS_DISTRO/setup.bash
    export TURTLEBOT3_MODEL=burger
    export LIBGL_ALWAYS_SOFTWARE=1  # オンボードGPU のときはこれをしないとGazebo が暗くなる
    ros2 launch turtlebot3_gazebo turtlebot3_dqn_stage1.launch.py
@@ -49,7 +48,7 @@ Turtlebot3に制御則を実装するパッケージ．
    すると正しく起動する．
 2. 別のターミナルで制御を開始する．
     ```
-   source ~/ros2_ws/src/install/setup.bash
+   source ~/ros2_ws/install/setup.bash
    ros2 run tb3_controller_cpp tb3_controller_node
    ```
 
@@ -67,12 +66,17 @@ Turtlebot3に制御則を実装するパッケージ．
    ```
    ros2 run tb3_controller_cpp tb3_controller_node --ros-args -p Kp:=3.0
    ```
-   `Kp:=1.0` の部分を色々変えて実行してみよう．
+   `Kp`，`Kd`，および`T`を色々変えて実行してみよう．
+   目標値は手順2 でも変更できるが，起動時の目標値として`init_xd` というパラメータも用意している．  
+   都度`-p` オプションをつければ，複数のパラメータを同時に設定することもできる．
+   ```
+   ros2 run tb3_controller_cpp tb3_controller_node --ros-args -p Kp:=2.0 -p Kd:=1.5 -p T:=0.01 -p init_xd:=1.5
+   ```
 4. データの記録
    rosbag2 を使用してデータの記録を行う．
    ```
    cd ~/ros2_ws/src/tb_controller_cpp/result
-   ros2 bag record /cmd_vel /xd /scan
+   ros2 bag record /scan /xd /cmd_vel
    ```
 5. グラフを書く
    ```

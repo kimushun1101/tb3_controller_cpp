@@ -16,14 +16,14 @@
 
 Tb3Controller::Tb3Controller() : Node("tb3_controller")
 {
-  this->declare_parameter<std::float_t>("init_xd", 1.0);
-  this->get_parameter("init_xd", xd_);
   this->declare_parameter<std::float_t>("Kp", 1.0);
   this->get_parameter("Kp", Kp_);
   this->declare_parameter<std::float_t>("Kd", 1.0);
   this->get_parameter("Kd", Kd_);
   this->declare_parameter<std::float_t>("T", 0.001);
   this->get_parameter("T", T_);
+  this->declare_parameter<std::float_t>("init_xd", 1.0);
+  this->get_parameter("init_xd", xd_);
   std::chrono::milliseconds sampling_period{(int)(T_*1000.0)};
   x_ = xd_; // /scan トピックが取得されるまでは，目標値と一致させておくことで制御入力を0とする
   e_pre_ = 0.0;
@@ -38,10 +38,10 @@ Tb3Controller::Tb3Controller() : Node("tb3_controller")
     sampling_period, std::bind(&Tb3Controller::timer_callback, this));
 
   RCLCPP_INFO(this->get_logger(), "tb3_controller node has been initialised");
-  RCLCPP_INFO_STREAM(this->get_logger(), "initial xd : " << xd_);
   RCLCPP_INFO_STREAM(this->get_logger(), "Kp : " << Kp_);
   RCLCPP_INFO_STREAM(this->get_logger(), "Kd : " << Kd_);
   RCLCPP_INFO_STREAM(this->get_logger(), "T : " << T_);
+  RCLCPP_INFO_STREAM(this->get_logger(), "initial xd : " << xd_);
 }
 
 void Tb3Controller::xd_callback(std_msgs::msg::Float32::SharedPtr msg)

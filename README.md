@@ -60,7 +60,7 @@ Turtlebot3 に制御則を実装するパッケージ．
    ```
    ros2 service call /reset_simulation std_srvs/srv/Empty
    ```
-2. 目標値の変更
+2. 目標値の変更  
    別のターミナルを開いて以下のコマンドを実行する．
    ```
    ros2 topic pub /xd std_msgs/msg/Float32 "data: 3.0"

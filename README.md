@@ -16,6 +16,13 @@ Turtlebot3 に制御則を実装するパッケージ．
    cd ros2_setup_scripts_ubuntu
    ./run.sh
    ```
+   このインストールスクリプトを使わない場合には，
+   [公式インストールページ](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html) を参考に ROS 2 をインストールして，
+   [Building a Custom Debian Package](https://docs.ros.org/en/humble/How-To-Guides/Building-a-Custom-Debian-Package.html) を参考に `rosdep` の準備を完了させておく．
+   さらに，`~/.bashrc` に ROS コマンドを有効にするためのコマンドを追加する．
+   ```
+   echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
+   ```
 3. ROS2のワークスペースを作り，このパッケージをインストール
    ```
    mkdir -p ~/ros2_ws/src
@@ -42,7 +49,7 @@ Turtlebot3 に制御則を実装するパッケージ．
    export LIBGL_ALWAYS_SOFTWARE=1  # オンボードGPU のときはこれをしないとGazebo が暗くなる？
    ros2 launch turtlebot3_gazebo turtlebot3_dqn_stage1.launch.py
    ```
-   初回時，エラーが出てロボットモデルが出ない場合には，`Ctrl+c`で一度閉じ，再度以下を実行
+   初回時，エラーが出てロボットモデルが出ない場合には，`Ctrl+c` で一度閉じ，再度以下を実行
    ```
    ros2 launch turtlebot3_gazebo turtlebot3_dqn_stage1.launch.py
    ```
@@ -55,8 +62,8 @@ Turtlebot3 に制御則を実装するパッケージ．
 
 ## 調整方法
 1. Gazebo 上のロボットの移動  
-   `t`キーを押下して`Translation Mode`に移行してからロボットをドラッグ・アンド・ドロップ．  
-   シミュレーションをリセットしたい場合には以下のROS 2 service コマンドを実行する．
+   `t` キーを押下して `Translation Mode` に移行してからロボットをドラッグ・アンド・ドロップ．  
+   シミュレーションをリセットしたい場合には以下の ROS 2 service コマンドを実行する．
    ```
    ros2 service call /reset_simulation std_srvs/srv/Empty
    ```
@@ -67,13 +74,13 @@ Turtlebot3 に制御則を実装するパッケージ．
    ```
    新しい目標値に向かってロボットが動くはず．
 3. パラメータの調整  
-   制御則を実行したターミナルで`Ctrl+c` を押下することで制御則を一度切り，以下で実行し直す．
+   制御則を実行したターミナルで `Ctrl+c` を押下することで制御則を一度切り，以下で実行し直す．
    ```
    ros2 run tb3_controller_cpp tb3_controller_node --ros-args -p Kp:=3.0
    ```
-   `Kp`，`Kd`，および`T`を色々変えて実行してみよう．
-   目標値は手順2 でも変更できるが，起動時の目標値として`init_xd` というパラメータも用意している．  
-   都度`-p` オプションをつければ，複数のパラメータを同時に設定することもできる．
+   `Kp`，`Kd`，および `T` を色々変えて実行してみよう．
+   目標値は手順2 でも変更できるが，起動時の目標値として `init_xd` というパラメータも用意している．  
+   都度 `-p` オプションをつければ，複数のパラメータを同時に設定することもできる．
    ```
    ros2 run tb3_controller_cpp tb3_controller_node --ros-args -p Kp:=2.0 -p Kd:=1.5 -p T:=0.01 -p init_xd:=1.5
    ```
@@ -89,6 +96,6 @@ Turtlebot3 に制御則を実装するパッケージ．
    ```
    ros2 run plotjuggler plotjuggler
    ```
-   `File`→`Data`からrosbag2 で保存したデータを読み込み描画する．  
-   自身のプログラムでグラフ作成したい場合には，CSV Exporter を使用すればCSV 形式でも取得できる．
+   `File`→`Data` から rosbag2 で保存したデータを読み込み描画する．  
+   自身のプログラムでグラフ作成したい場合には，CSV Exporter を使用すれば CSV 形式でも取得できる．
 

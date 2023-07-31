@@ -65,7 +65,14 @@ void Tb3Controller::timer_callback()
 {
   auto message = geometry_msgs::msg::Twist();
   auto e = x_ - xd_;
-  message.linear.x = - Kp_ * e - Kd_ * (e - e_pre_)/T_;
+  auto u = - Kp_ * e - Kd_ * (e - e_pre_)/T_;
   e_pre_ = e;
+  if(std::abs(u) > 0.5){
+    auto sign = (u > 0) ? 1 : ((u < 0) ? -1 : 0);
+    message.linear.x = sign * 0.5;
+  }
+  else{
+    message.linear.x = u;
+  }
   cmd_vel_pub_->publish(message);
 }

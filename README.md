@@ -49,7 +49,8 @@ Turtlebot3 に制御則を実装するパッケージ．
    export TURTLEBOT3_MODEL=burger
    ros2 launch turtlebot3_gazebo turtlebot3_dqn_stage1.launch.py
    ```
-   初回時，エラーが出てロボットモデルが出ない場合には，`Ctrl+c` で一度閉じ，再度以下を実行
+   初回時はGazebo の立ち上がりが遅く，エラーが出てロボットモデルが出ないかもしれない．
+   そのような場合には`Ctrl+c` で一度閉じ，再度以下を実行する．
    ```
    ros2 launch turtlebot3_gazebo turtlebot3_dqn_stage1.launch.py
    ```

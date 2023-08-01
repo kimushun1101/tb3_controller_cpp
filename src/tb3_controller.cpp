@@ -18,6 +18,8 @@ Tb3Controller::Tb3Controller() : Node("tb3_controller")
 {
   this->declare_parameter<std::float_t>("Kp", 1.0);
   this->get_parameter("Kp", Kp_);
+  this->declare_parameter<std::float_t>("Ki", 1.0);
+  this->get_parameter("Ki", Ki_);
   this->declare_parameter<std::float_t>("Kd", 1.0);
   this->get_parameter("Kd", Kd_);
   this->declare_parameter<std::float_t>("T", 0.001);
@@ -26,6 +28,7 @@ Tb3Controller::Tb3Controller() : Node("tb3_controller")
   this->get_parameter("init_xd", xd_);
   std::chrono::milliseconds sampling_period{(int)(T_*1000.0)};
   x_ = xd_; // /scan トピックが取得されるまでは，目標値と一致させておくことで制御入力を0とする
+  e_sum_ = 0.0;
   e_pre_ = 0.0;
 
   using std::placeholders::_1;
@@ -39,6 +42,7 @@ Tb3Controller::Tb3Controller() : Node("tb3_controller")
 
   RCLCPP_INFO(this->get_logger(), "tb3_controller node has been initialised");
   RCLCPP_INFO_STREAM(this->get_logger(), "Kp : " << Kp_);
+  RCLCPP_INFO_STREAM(this->get_logger(), "Ki : " << Ki_);
   RCLCPP_INFO_STREAM(this->get_logger(), "Kd : " << Kd_);
   RCLCPP_INFO_STREAM(this->get_logger(), "T : " << T_);
   RCLCPP_INFO_STREAM(this->get_logger(), "initial xd : " << xd_);
@@ -65,7 +69,8 @@ void Tb3Controller::timer_callback()
 {
   auto message = geometry_msgs::msg::Twist();
   auto e = x_ - xd_;
-  auto u = - Kp_ * e - Kd_ * (e - e_pre_)/T_;
+  e_sum_ = e_sum_ + e*T_;
+  auto u = - Kp_ * e - Ki_ * e_sum_ - Kd_ * (e - e_pre_)/T_;
   e_pre_ = e;
   if(std::abs(u) > 0.5){
     auto sign = (u > 0) ? 1 : ((u < 0) ? -1 : 0);

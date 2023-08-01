@@ -33,9 +33,11 @@ private:
   void scan_callback(sensor_msgs::msg::LaserScan::SharedPtr msg);
   void timer_callback();
   float Kp_;
+  float Ki_;
   float Kd_;
   float xd_;
   float x_;
+  float e_sum_;
   float e_pre_;
   float T_;
   rclcpp::TimerBase::SharedPtr timer_;

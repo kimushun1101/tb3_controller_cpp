@@ -45,8 +45,8 @@ Turtlebot3 に制御則を実装するパッケージ．
 
 1. シミュレータの起動
    ```
-   export TURTLEBOT3_MODEL=burger
    export LIBGL_ALWAYS_SOFTWARE=1  # オンボードGPU のときはこれをしないとGazebo が暗くなる？
+   export TURTLEBOT3_MODEL=burger
    ros2 launch turtlebot3_gazebo turtlebot3_dqn_stage1.launch.py
    ```
    初回時，エラーが出てロボットモデルが出ない場合には，`Ctrl+c` で一度閉じ，再度以下を実行

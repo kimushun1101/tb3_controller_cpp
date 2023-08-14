@@ -12,8 +12,71 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+#include <rclcpp/rclcpp.hpp>
+#include <std_msgs/msg/float32.hpp>
+#include <geometry_msgs/msg/twist.hpp>
+#include <sensor_msgs/msg/laser_scan.hpp>
 
-#include "tb3_controller_cpp/tb3_controller.hpp"
+class Tb3Controller : public rclcpp::Node
+{
+public:
+  Tb3Controller() : Node("tb3_controller")
+  {
+    this->declare_parameter<std::float_t>("Kp", 1.0);
+    this->get_parameter("Kp", Kp_);
+    this->declare_parameter<std::float_t>("T", 0.001);
+    this->get_parameter("T", T_);
+    this->declare_parameter<std::float_t>("init_xd", 1.0);
+    this->get_parameter("init_xd", xd_);
+    std::chrono::milliseconds sampling_period{(int)(T_*1000.0)};
+    x_ = xd_; // /scan トピックが取得されるまでは，目標値と一致させておくことで制御入力を0とする
+
+    using std::placeholders::_1;
+    xd_sub_ = this->create_subscription<std_msgs::msg::Float32>(
+      "/xd", rclcpp::QoS(10), std::bind(&Tb3Controller::xd_callback, this, _1));
+    scan_sub_ = this->create_subscription<sensor_msgs::msg::LaserScan>(
+      "/scan", rclcpp::SensorDataQoS(), std::bind(&Tb3Controller::scan_callback, this, _1));
+    cmd_vel_pub_ = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", 10);
+    timer_ = this->create_wall_timer(
+      sampling_period, std::bind(&Tb3Controller::timer_callback, this));
+
+    RCLCPP_INFO(this->get_logger(), "tb3_controller node has been initialised");
+    RCLCPP_INFO_STREAM(this->get_logger(), "Kp : " << Kp_);
+    RCLCPP_INFO_STREAM(this->get_logger(), "T : " << T_);
+    RCLCPP_INFO_STREAM(this->get_logger(), "initial xd : " << xd_);
+  }
+
+private:
+  void xd_callback(std_msgs::msg::Float32::SharedPtr msg)
+  {
+    if(xd_ != msg->data)
+    {
+      xd_ = msg->data;
+      RCLCPP_INFO_STREAM(this->get_logger(), "x_d has been updated : " << xd_);
+    }
+  }
+  void scan_callback(sensor_msgs::msg::LaserScan::SharedPtr msg)
+  {
+    // 0 ~ 2\pi まで360点取得している
+    // RCLCPP_INFO_STREAM(this->get_logger(), "point amount : " << msg->ranges.size());
+    // x_ = msg->ranges[0];  // 正面の距離を計測
+    x_ = msg->ranges[180];  // 背面の距離を計測
+  }
+  void timer_callback()
+  {
+    auto msg = geometry_msgs::msg::Twist();
+    msg.linear.x = - Kp_ * (x_ - xd_);
+    cmd_vel_pub_->publish(msg);
+  }
+  rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub_;
+  rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr xd_sub_;
+  rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr scan_sub_;
+  float Kp_;
+  float xd_;
+  float x_;
+  float T_;
+  rclcpp::TimerBase::SharedPtr timer_;
+};
 
 int main(int argc, char * argv[])
 {

@@ -7,41 +7,36 @@ Turtlebot3 に制御則を実装するパッケージ．
 
 1. Ubuntu22.04を用意  
    WSL でも可能であることは確認している．
-2. Git のインストールとROS 2 環境の準備  
-   [非公式インストールスクリプト](https://github.com/Tiryoh/ros2_setup_scripts_ubuntu)が便利
-   ```
-   sudo apt update
-   sudo apt install git
-   git clone https://github.com/Tiryoh/ros2_setup_scripts_ubuntu
-   cd ros2_setup_scripts_ubuntu
-   ./run.sh
-   ```
-   このインストールスクリプトを使わない場合には，
+2. ROS 2 環境構築  
    [公式インストールページ](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html) を参考に ROS 2 をインストールして，
-   [Building a Custom Debian Package](https://docs.ros.org/en/humble/How-To-Guides/Building-a-Custom-Debian-Package.html) を参考に `rosdep` の準備を完了させておく．
+   [Building a Custom Debian Package](https://docs.ros.org/en/humble/How-To-Guides/Building-a-Custom-Debian-Package.html) を参考に `rosdep` の初期化まで完了させておく．  
    さらに，`~/.bashrc` に ROS コマンドを有効にするためのコマンドを追加する．
    ```
    echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
    ```
-3. ROS2のワークスペースを作り，このパッケージをインストール
+
+## パッケージのインストールとビルド
+
+1. ROS2のワークスペースを作り，このパッケージをインストール
    ```
    mkdir -p ~/ros2_ws/src
    cd ~/ros2_ws/src
+   sudo apt update
+   sudo apt install git
    git clone https://github.com/kimushun1101/tb3_controller_cpp.git
    ```
-4. このパッケージの依存関係を解決
+2. このパッケージの依存関係を解決
    ```
-   rosdep update
    cd ~/ros2_ws
    rosdep install -y --from-paths src
    ```
-5. ビルド
+3. ビルド
    ```
    cd ~/ros2_ws
    colcon build
    ```
 
-## 実行方法
+## シミュレータと制御則の実行
 
 1. シミュレータの起動
    ```
@@ -49,11 +44,10 @@ Turtlebot3 に制御則を実装するパッケージ．
    export TURTLEBOT3_MODEL=burger
    ros2 launch turtlebot3_gazebo turtlebot3_dqn_stage1.launch.py
    ```
-   初回時はGazebo の立ち上がりが遅く，エラーが出てロボットモデルが出ないかもしれない．
-   そのような場合には`Ctrl+c` で一度閉じ，再度以下を実行する．
-   ```
-   ros2 launch turtlebot3_gazebo turtlebot3_dqn_stage1.launch.py
-   ```
+   初回時はGazebo の立ち上がりが遅く，エラーが出てロボットモデルが出ないかもしれない．  
+   そのような場合には`Ctrl+C` で一度閉じ，再度
+   `ros2 launch turtlebot3_gazebo turtlebot3_dqn_stage1.launch.py`
+   を実行する．  
    それでもロボットモデルが出ない場合には，Gazebo 画面内の左にあるInsert タブから，Turtlebot3(Burger) をクリックしてシミュレータ上にロボットを手動で置く．
 2. 新しく別のターミナルを開き，以下のコマンドで制御を開始
     ```
@@ -61,7 +55,8 @@ Turtlebot3 に制御則を実装するパッケージ．
    ros2 run tb3_controller_cpp tb3_controller_node
    ```
 
-## 調整方法
+## パラメータ調整
+
 1. Gazebo 上のロボットの移動  
    `t` キーを押下して `Translation Mode` に移行してからロボットをドラッグ・アンド・ドロップ．  
    シミュレーションをリセットしたい場合には以下の ROS 2 service コマンドを実行する．
@@ -75,18 +70,19 @@ Turtlebot3 に制御則を実装するパッケージ．
    ```
    新しい目標値に向かってロボットが動くはず．
 3. パラメータの調整  
-   制御則を実行したターミナルで `Ctrl+c` を押下することで制御則を一度切り，以下で実行し直す．
+   制御則を実行したターミナルで `Ctrl+C` を押下することで制御則を一度切り，以下で実行し直す．
    ```
    ros2 run tb3_controller_cpp tb3_controller_node --ros-args -p Kp:=3.0
    ```
-   `Kp`，`Kd`，および `T` を色々変えて実行してみよう．
+   `Kp` と `T` を色々変えて実行してみよう．
    目標値は手順2 でも変更できるが，起動時の目標値として `init_xd` というパラメータも用意している．  
    都度 `-p` オプションをつければ，複数のパラメータを同時に設定することもできる．
    ```
-   ros2 run tb3_controller_cpp tb3_controller_node --ros-args -p Kp:=2.0 -p Kd:=1.5 -p T:=0.01 -p init_xd:=1.5
+   ros2 run tb3_controller_cpp tb3_controller_node --ros-args -p Kp:=2.0 -p T:=0.01 -p init_xd:=1.5
    ```
 
 ## 結果出力
+
 1. データの記録  
    rosbag2 を使用してデータの記録を行う．
    ```

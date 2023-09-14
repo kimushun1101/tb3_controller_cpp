@@ -33,7 +33,7 @@ Turtlebot3 に制御則を実装するパッケージ．
 3. ビルド
    ```
    cd ~/ros2_ws
-   colcon build
+   colcon build --symlink-install
    ```
 
 ## シミュレータと制御則の実行
@@ -60,6 +60,7 @@ Turtlebot3 に制御則を実装するパッケージ．
 source ~/ros2_ws/install/setup.bash
 ros2 launch tb3_controller_cpp simulation_and_controller.launch.yaml 
 ```
+`Ctrl+C` でシミュレータも終了してしまうため，以下のパラメータ調整には不向き．
 
 ## パラメータ調整
 

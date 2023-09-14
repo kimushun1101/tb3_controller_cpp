@@ -55,6 +55,12 @@ Turtlebot3 に制御則を実装するパッケージ．
    ros2 run tb3_controller_cpp tb3_controller_node
    ```
 
+シミュレータと制御則を一つのターミナルから同時実行させたい場合には，以下のコマンドを入力する．
+```
+source ~/ros2_ws/install/setup.bash
+ros2 launch tb3_controller_cpp simulation_and_controller.launch.yaml 
+```
+
 ## パラメータ調整
 
 1. Gazebo 上のロボットの移動  

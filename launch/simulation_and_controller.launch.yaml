@@ -1,0 +1,8 @@
+launch:
+
+- include:
+    file: "$(find-pkg-share turtlebot3_gazebo)/launch/turtlebot3_dqn_stage1.launch.py"
+
+- node:
+    pkg: "tb3_controller_cpp"
+    exec: "tb3_controller_node"

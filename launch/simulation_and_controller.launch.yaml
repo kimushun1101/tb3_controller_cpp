@@ -6,3 +6,13 @@ launch:
 - node:
     pkg: "tb3_controller_cpp"
     exec: "tb3_controller_node"
+    param:
+    -
+      name: "Kp"
+      value: 1.0
+    -
+      name: "T"
+      value: 0.001
+    -
+      name: "init_xd"
+      value: 1.0

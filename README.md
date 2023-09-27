@@ -103,3 +103,23 @@ ros2 launch tb3_controller_cpp simulation_and_controller.launch.yaml
    `File`→`Data` から rosbag2 で保存したデータを読み込み描画する．  
    自身のプログラムでグラフ作成したい場合には，CSV Exporter を使用すれば CSV 形式でも取得できる．
 
+## Turtlebot 3 実機での実行
+
+1. ロボットのセットアップ  
+   [公式の e-manual](https://emanual.robotis.com/docs/en/platform/turtlebot3/quick-start/) に従う
+2. ロボットのソフトウェアを立ち上げ
+   ```
+   export TURTLEBOT3_MODEL=burger
+   ros2 launch turtlebot3_bringup robot.launch.py 
+   ```
+3. 新しく別のターミナルを開き，以下のコマンドで制御を開始
+    ```
+   source ~/ros2_ws/install/setup.bash
+   ros2 run tb3_controller_cpp tb3_controller_node
+   ```
+
+シミュレータと制御則を一つのターミナルから同時実行させたい場合には，以下のコマンドを入力する．
+```
+source ~/ros2_ws/install/setup.bash
+ros2 launch tb3_controller_cpp turtlebot3_and_controller.launch.yaml 
+```

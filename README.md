@@ -107,12 +107,12 @@ ros2 launch tb3_controller_cpp simulation_and_controller.launch.yaml
 
 1. ロボットのセットアップ  
    [公式の e-manual](https://emanual.robotis.com/docs/en/platform/turtlebot3/quick-start/) に従う
-2. ロボットのソフトウェアを立ち上げ
+2. (SSH 先の Raspberry Pi 上で) ロボットのソフトウェアを立ち上げ
    ```
    export TURTLEBOT3_MODEL=burger
    ros2 launch turtlebot3_bringup robot.launch.py 
    ```
-3. 新しく別のターミナルを開き，以下のコマンドで制御を開始
+3. (SSH 先の Raspberry Pi 上で) 新しく別のターミナルを開き，以下のコマンドで制御を開始
     ```
    source ~/ros2_ws/install/setup.bash
    ros2 run tb3_controller_cpp tb3_controller_node

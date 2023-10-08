@@ -16,6 +16,7 @@
 #include <std_msgs/msg/float32.hpp>
 #include <geometry_msgs/msg/twist.hpp>
 #include <sensor_msgs/msg/laser_scan.hpp>
+#include <rcl_interfaces/msg/set_parameters_result.hpp>
 
 class Tb3Controller : public rclcpp::Node
 {
@@ -24,7 +25,7 @@ public:
   {
     this->declare_parameter<std::float_t>("Kp", 1.0);
     this->get_parameter("Kp", Kp_);
-    this->declare_parameter<std::float_t>("T", 0.001);
+    this->declare_parameter<std::float_t>("T", 0.01);
     this->get_parameter("T", T_);
     this->declare_parameter<std::float_t>("init_xd", 1.0);
     this->get_parameter("init_xd", xd_);
@@ -44,6 +45,10 @@ public:
     RCLCPP_INFO_STREAM(this->get_logger(), "Kp : " << Kp_);
     RCLCPP_INFO_STREAM(this->get_logger(), "T : " << T_);
     RCLCPP_INFO_STREAM(this->get_logger(), "initial xd : " << xd_);
+
+    // パラメータ変更のコールバックを登録
+    auto parameter_change_cb = std::bind(&Tb3Controller::parameter_callback, this, std::placeholders::_1);
+    param_handler_ = this->add_on_set_parameters_callback(parameter_change_cb);
   }
 
 private:
@@ -68,6 +73,26 @@ private:
     msg.linear.x = - Kp_ * (x_ - xd_);
     cmd_vel_pub_->publish(msg);
   }
+
+  // パラメータ変更のコールバック関数
+  rcl_interfaces::msg::SetParametersResult parameter_callback(const std::vector<rclcpp::Parameter> &parameters)
+  {
+    auto result = rcl_interfaces::msg::SetParametersResult();
+    result.successful = true;
+
+    for (const auto &parameter : parameters) {
+      if (parameter.get_name() == "Kp") {
+        Kp_ = parameter.as_double();
+        RCLCPP_INFO(this->get_logger(), "Kp has been updated to: %f", Kp_);
+      }
+      if (parameter.get_name() == "init_xd") {
+        xd_ = parameter.as_double();
+        RCLCPP_INFO(this->get_logger(), "xd has been updated to: %f", xd_);
+      }
+    }
+    return result;
+  }
+
   rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub_;
   rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr xd_sub_;
   rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr scan_sub_;
@@ -76,6 +101,7 @@ private:
   float x_;
   float T_;
   rclcpp::TimerBase::SharedPtr timer_;
+  OnSetParametersCallbackHandle::SharedPtr param_handler_;
 };
 
 int main(int argc, char * argv[])

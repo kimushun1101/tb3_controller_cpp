@@ -40,6 +40,7 @@ Turtlebot3 に制御則を実装するパッケージ．
 
 1. シミュレータの起動
    ```
+   # Terminal 1
    export LIBGL_ALWAYS_SOFTWARE=1  # オンボードGPU のときはこれをしないとGazebo が暗くなる？
    export TURTLEBOT3_MODEL=burger
    ros2 launch turtlebot3_gazebo turtlebot3_dqn_stage1.launch.py
@@ -50,13 +51,15 @@ Turtlebot3 に制御則を実装するパッケージ．
    を実行する．  
    それでもロボットモデルが出ない場合には，Gazebo 画面内の左にあるInsert タブから，Turtlebot3(Burger) をクリックしてシミュレータ上にロボットを手動で置く．
 2. 新しく別のターミナルを開き，以下のコマンドで制御を開始
-    ```
+   ```
+   # Terminal 2
    source ~/ros2_ws/install/setup.bash
    ros2 run tb3_controller_cpp tb3_controller_node
    ```
 
-シミュレータと制御則を一つのターミナルから同時実行させたい場合には，以下のコマンドを入力する．
+シミュレータと制御則を 1 つのターミナルから同時実行させたい場合には，上記の 2 つのターミナルのコマンドを`Ctrl+C` で終了して，以下のコマンドを入力する．
 ```
+# Terminal 1
 source ~/ros2_ws/install/setup.bash
 ros2 launch tb3_controller_cpp simulation_and_controller.launch.yaml 
 ```
@@ -68,23 +71,27 @@ ros2 launch tb3_controller_cpp simulation_and_controller.launch.yaml
    `t` キーを押下して `Translation Mode` に移行してからロボットをドラッグ・アンド・ドロップ．  
    シミュレーションをリセットしたい場合には以下の ROS 2 service コマンドを実行する．
    ```
+   # Terminal 3
    ros2 service call /reset_simulation std_srvs/srv/Empty
    ```
 2. 目標値の変更  
-   別のターミナルを開いて以下のコマンドを実行する．
+   以下のコマンドを実行する．
    ```
+   # Terminal 3
    ros2 topic pub /xd std_msgs/msg/Float32 "data: 3.0"
    ```
    新しい目標値に向かってロボットが動くはず．
 3. パラメータの調整  
    制御則を実行したターミナルで `Ctrl+C` を押下することで制御則を一度切り，以下で実行し直す．
    ```
+   # Terminal 2
    ros2 run tb3_controller_cpp tb3_controller_node --ros-args -p Kp:=3.0
    ```
    `Kp` と `T` を色々変えて実行してみよう．
    目標値は手順2 でも変更できるが，起動時の目標値として `init_xd` というパラメータも用意している．  
    都度 `-p` オプションをつければ，複数のパラメータを同時に設定することもできる．
    ```
+   # Terminal 2
    ros2 run tb3_controller_cpp tb3_controller_node --ros-args -p Kp:=2.0 -p T:=0.01 -p init_xd:=1.5
    ```
 
@@ -93,11 +100,15 @@ ros2 launch tb3_controller_cpp simulation_and_controller.launch.yaml
 1. データの記録  
    rosbag2 を使用してデータの記録を行う．
    ```
-   cd ~/ros2_ws/src/tb_controller_cpp/result
+   # Terminal 3
+   mkdir -p ~/ros2_ws/src/tb3_controller_cpp/result
+   cd ~/ros2_ws/src/tb3_controller_cpp/result
    ros2 bag record /scan /xd /cmd_vel
    ```
+   `Ctrl+C` で記録を終了する．
 2. グラフを書く
    ```
+   # Terminal 3
    ros2 run plotjuggler plotjuggler
    ```
    `File`→`Data` から rosbag2 で保存したデータを読み込み描画する．  
@@ -107,19 +118,22 @@ ros2 launch tb3_controller_cpp simulation_and_controller.launch.yaml
 
 1. ロボットのセットアップ  
    [公式の e-manual](https://emanual.robotis.com/docs/en/platform/turtlebot3/quick-start/) に従う
-2. (SSH 先の Raspberry Pi 上で) ロボットのソフトウェアを立ち上げ
+2. ロボットのソフトウェアを立ち上げ
    ```
+   # SSH raspberry Pi 1
    export TURTLEBOT3_MODEL=burger
    ros2 launch turtlebot3_bringup robot.launch.py 
    ```
-3. (SSH 先の Raspberry Pi 上で) 新しく別のターミナルを開き，以下のコマンドで制御を開始
-    ```
+3. 新しく別のターミナルを開き，以下のコマンドで制御を開始
+   ```
+   # SSH raspberry Pi 2
    source ~/ros2_ws/install/setup.bash
    ros2 run tb3_controller_cpp tb3_controller_node
    ```
 
-シミュレータと制御則を一つのターミナルから同時実行させたい場合には，以下のコマンドを入力する．
+シミュレータと制御則を 1 つのターミナルから同時実行させたい場合には，以下のコマンドを入力する．
 ```
+# SSH raspberry Pi 1
 source ~/ros2_ws/install/setup.bash
 ros2 launch tb3_controller_cpp turtlebot3_and_controller.launch.yaml 
 ```

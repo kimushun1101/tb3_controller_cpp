@@ -154,4 +154,4 @@ plotjuggler は GUI で使用するため，取得した rosbag を `scp` コマ
 手元のシミュレーションを行ったパソコンで実行する必要がある．
 
 ## License
-Apache License Version 2.0
+Apache License 2.0

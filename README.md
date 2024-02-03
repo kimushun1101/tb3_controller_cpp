@@ -150,8 +150,8 @@ ros2 launch tb3_controller_cpp turtlebot3_and_controller.launch.yaml
 ```
 
 パラメーター調整や rosbag を用いたデータ取得はシミュレーターと同様であるが，
-plotjuggler は GUI で使用するため，取得した rosbag を `scp` コマンドで raspberry Pi から取り出して，
-手元のシミュレーションを行ったパソコンで実行する必要がある．
+plotjuggler は GUI で使用するため，取得した rosbag を `scp` コマンドなどで raspberry Pi から取り出して，
+シミュレーションを行った手元のパソコンで実行する必要がある．
 
 ## License
 Apache License 2.0

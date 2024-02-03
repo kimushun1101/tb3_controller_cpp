@@ -148,3 +148,10 @@ ros2 launch tb3_controller_cpp simulation_and_controller.launch.yaml
 source ~/ros2_ws/install/setup.bash
 ros2 launch tb3_controller_cpp turtlebot3_and_controller.launch.yaml 
 ```
+
+パラメーター調整や rosbag を用いたデータ取得はシミュレーターと同様であるが，
+plotjuggler は GUI で使用するため，取得した rosbag を `scp` コマンドで raspberry Pi から取り出して，
+手元のシミュレーションを行ったパソコンで実行する必要がある．
+
+## License
+Apache License Version 2.0

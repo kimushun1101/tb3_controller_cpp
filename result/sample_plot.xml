@@ -1,21 +1,22 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <root>
- <tabbed_widget name="Main Window" parent="main_window">
+ <tabbed_widget parent="main_window" name="Main Window">
   <Tab containers="1" tab_name="tab1">
    <Container>
-    <DockSplitter orientation="-" sizes="0.5;0.5" count="2">
+    <DockSplitter count="2" sizes="0.5;0.5" orientation="-">
      <DockArea name="...">
-      <plot flip_y="false" flip_x="false" style="Lines" mode="TimeSeries">
-       <range left="1.054438" right="12.682923" top="3.061142" bottom="0.953732"/>
+      <plot flip_x="false" style="Lines" flip_y="false" mode="TimeSeries">
+       <range top="3.081903" right="22.341857" bottom="0.915360" left="0.000021"/>
        <limitY/>
-       <curve name="/scan/ranges[180]" color="#1f77b4"/>
+       <curve color="#1f77b4" name="/scan/ranges[180]"/>
+       <curve color="#d62728" name="/xd/data"/>
       </plot>
      </DockArea>
      <DockArea name="...">
-      <plot flip_y="false" flip_x="false" style="Lines" mode="TimeSeries">
-       <range left="1.054438" right="12.682923" top="1.023134" bottom="-0.030571"/>
+      <plot flip_x="false" style="Lines" flip_y="false" mode="TimeSeries">
+       <range top="2.073990" right="22.341857" bottom="-0.081643" left="0.000021"/>
        <limitY/>
-       <curve name="/cmd_vel/linear/x" color="#d62728"/>
+       <curve color="#1ac938" name="/cmd_vel/linear/x"/>
       </plot>
      </DockArea>
     </DockSplitter>
@@ -28,7 +29,7 @@
  <!-- - - - - - - - - - - - - - - -->
  <Plugins>
   <plugin ID="DataLoad CSV">
-   <default delimiter="0" time_axis=""/>
+   <default time_axis="" delimiter="0"/>
   </plugin>
   <plugin ID="DataLoad MCAP"/>
   <plugin ID="DataLoad ROS2 bags">
@@ -61,7 +62,7 @@
  <!-- - - - - - - - - - - - - - - -->
  <previouslyLoaded_Datafiles>
   <fileInfo prefix="" filename="sample_rosbag/metadata.yaml">
-   <selected_datasources value="/cmd_vel;/scan"/>
+   <selected_datasources value="/cmd_vel;/scan;/xd"/>
    <plugin ID="DataLoad ROS2 bags">
     <use_header_stamp value="false"/>
     <discard_large_arrays value="true"/>

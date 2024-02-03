@@ -36,9 +36,9 @@ Turtlebot3 に制御則を実装するパッケージ．
    colcon build --symlink-install
    ```
 
-## シミュレータと制御則の実行
+## シミュレーターと制御則の実行
 
-1. シミュレータの起動
+1. シミュレーターの起動
    ```
    # Terminal 1
    export LIBGL_ALWAYS_SOFTWARE=1  # オンボードGPU のときはこれをしないとGazebo が暗くなる？
@@ -49,7 +49,7 @@ Turtlebot3 に制御則を実装するパッケージ．
    そのような場合には`Ctrl+C` で一度閉じ，再度
    `ros2 launch turtlebot3_gazebo turtlebot3_dqn_stage1.launch.py`
    を実行する．  
-   それでもロボットモデルが出ない場合には，Gazebo 画面内の左にあるInsert タブから，Turtlebot3(Burger) をクリックしてシミュレータ上にロボットを手動で置く．
+   それでもロボットモデルが出ない場合には，Gazebo 画面内の左にあるInsert タブから，Turtlebot3(Burger) をクリックしてシミュレーター上にロボットを手動で置く．
 2. 新しく別のターミナルを開き，以下のコマンドで制御を開始（コントローラーを実行）
    ```
    # Terminal 2
@@ -57,7 +57,7 @@ Turtlebot3 に制御則を実装するパッケージ．
    ros2 run tb3_controller_cpp tb3_controller_node
    ```
 
-シミュレータと制御則を 1 つのターミナルから同時実行させたい場合には，上記の 2 つのターミナルのコマンドを`Ctrl+C` で終了して，以下のコマンドを入力する．
+シミュレーターと制御則を 1 つのターミナルから同時実行させたい場合には，上記の 2 つのターミナルのコマンドを`Ctrl+C` で終了して，以下のコマンドを入力する．
 ```
 # Terminal 1
 source ~/ros2_ws/install/setup.bash
@@ -67,7 +67,7 @@ ros2 launch tb3_controller_cpp simulation_and_controller.launch.yaml
 
 ## パラメーター調整
 
-`# Terminal 1` でシミュレータ，`# Terminal 2` でコントローラーを起動しているものとする．
+`# Terminal 1` でシミュレーター，`# Terminal 2` でコントローラーを起動しているものとする．
 
 1. Gazebo 上のロボットの移動  
    `t` キーを押下して `Translation Mode` に移行してからロボットをドラッグ・アンド・ドロップ．  
@@ -94,20 +94,29 @@ ros2 launch tb3_controller_cpp simulation_and_controller.launch.yaml
    都度 `-p` オプションをつければ，複数のパラメーターを同時に設定することもできる．
    ```
    # Terminal 2
-   ros2 run tb3_controller_cpp tb3_controller_node --ros-args -p Kp:=2.0 -p T:=0.01 -p init_xd:=1.5
+   ros2 run tb3_controller_cpp tb3_controller_node --ros-args -p Kp:=0.5 -p T:=0.01 -p init_xd:=3.0
    ```
+4. Launch ファイルに反映
+   決定したパラメータを [launch/simulation_and_controller.launch.yaml](./launch/simulation_and_controller.launch.yaml#L9) に書き込む．
 
 ## 結果出力
+
+`# Terminal 1` でシミュレーター，`# Terminal 2` でコントローラーを起動しているものとする．
 
 1. データの記録  
    rosbag2 を使用してデータの記録を開始する．
    ```
-   # Terminal 3
+   # Terminal 4
    mkdir -p ~/ros2_ws/src/tb3_controller_cpp/result
    cd ~/ros2_ws/src/tb3_controller_cpp/result
    ros2 bag record /scan /xd /cmd_vel
    ```
-   `# Terminal 2` で記録したい制御則を実行し，`# Terminal 3` を `Ctrl+C` することで記録を終了する．
+   目標値の変更を行う．
+   ```
+   # Terminal 3
+   ros2 topic pub /xd std_msgs/msg/Float32 "data: 3.0"
+   ```
+   記録したい動作が終了した後，`# Terminal 3` を `Ctrl+C` することで記録を終了する．
 2. グラフを書く
    ```
    # Terminal 3
@@ -133,7 +142,7 @@ ros2 launch tb3_controller_cpp simulation_and_controller.launch.yaml
    ros2 run tb3_controller_cpp tb3_controller_node
    ```
 
-シミュレータと制御則を 1 つのターミナルから同時実行させたい場合には，以下のコマンドを入力する．
+シミュレーターと制御則を 1 つのターミナルから同時実行させたい場合には，以下のコマンドを入力する．
 ```
 # SSH raspberry Pi 1
 source ~/ros2_ws/install/setup.bash

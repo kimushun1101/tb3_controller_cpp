@@ -24,7 +24,7 @@ public:
   {
     this->declare_parameter<std::float_t>("Kp", 1.0);
     this->get_parameter("Kp", Kp_);
-    this->declare_parameter<std::float_t>("T", 0.001);
+    this->declare_parameter<std::float_t>("T", 0.01);
     this->get_parameter("T", T_);
     this->declare_parameter<std::float_t>("init_xd", 1.0);
     this->get_parameter("init_xd", xd_);

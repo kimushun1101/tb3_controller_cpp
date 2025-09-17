@@ -9,14 +9,14 @@ https://github.com/kimushun1101/tb3_controller_cpp/releases/tag/v1.0.0
 
 ## 環境構築
 
-1. Ubuntu 22.04を用意  
+1. Ubuntu 24.04を用意  
    WSL でも可能であることは確認している．
 2. ROS 2 環境構築  
-   [公式インストールページ](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html) を参考に ROS 2 をインストールして，
-   [Building a Custom Debian Package](https://docs.ros.org/en/humble/How-To-Guides/Building-a-Custom-Debian-Package.html) を参考に `rosdep` の初期化まで完了させておく．  
+   [公式インストールページ](https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debs.html) を参考に ROS 2 をインストールして，
+   [Building a Custom Debian Package](https://docs.ros.org/en/jazzy/How-To-Guides/Building-a-Custom-Deb-Package.html) を参考に `rosdep` の初期化まで完了させておく．  
    さらに，`~/.bashrc` に ROS コマンドを有効にするためのコマンドを追加する．
    ```
-   echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
+   echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
    ```
 
 ## パッケージのインストールとビルド
@@ -27,7 +27,7 @@ https://github.com/kimushun1101/tb3_controller_cpp/releases/tag/v1.0.0
    cd ~/ros2_ws/src
    sudo apt update
    sudo apt install git
-   git clone https://github.com/kimushun1101/tb3_controller_cpp.git
+   git clone -b jazzy https://github.com/kimushun1101/tb3_controller_cpp.git
    ```
 2. このパッケージの依存関係を解決
    ```
@@ -45,15 +45,9 @@ https://github.com/kimushun1101/tb3_controller_cpp/releases/tag/v1.0.0
 1. シミュレーターの起動
    ```
    # Terminal 1
-   export LIBGL_ALWAYS_SOFTWARE=1  # オンボードGPU のときはこれをしないとGazebo が暗くなる？
    export TURTLEBOT3_MODEL=burger
    ros2 launch turtlebot3_gazebo turtlebot3_dqn_stage1.launch.py
    ```
-   初回時はGazebo の立ち上がりが遅く，エラーが出てロボットモデルが出ないかもしれない．  
-   そのような場合には`Ctrl+C` で一度閉じ，再度
-   `ros2 launch turtlebot3_gazebo turtlebot3_dqn_stage1.launch.py`
-   を実行する．  
-   それでもロボットモデルが出ない場合には，Gazebo 画面内の左にあるInsert タブから，Turtlebot3(Burger) をクリックしてシミュレーター上にロボットを手動で置く．
 2. 新しく別のターミナルを開き，以下のコマンドで制御を開始（コントローラーを実行）
    ```
    # Terminal 2

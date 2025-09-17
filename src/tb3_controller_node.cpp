@@ -14,7 +14,7 @@
 
 #include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/float32.hpp>
-#include <geometry_msgs/msg/twist.hpp>
+#include <geometry_msgs/msg/twist_stamped.hpp>
 #include <sensor_msgs/msg/laser_scan.hpp>
 
 class Tb3Controller : public rclcpp::Node
@@ -36,7 +36,7 @@ public:
       "/xd", rclcpp::QoS(10), std::bind(&Tb3Controller::xd_callback, this, _1));
     scan_sub_ = this->create_subscription<sensor_msgs::msg::LaserScan>(
       "/scan", rclcpp::SensorDataQoS(), std::bind(&Tb3Controller::scan_callback, this, _1));
-    cmd_vel_pub_ = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", 10);
+    cmd_vel_pub_ = this->create_publisher<geometry_msgs::msg::TwistStamped>("/cmd_vel", 10);
     timer_ = this->create_wall_timer(
       sampling_period, std::bind(&Tb3Controller::timer_callback, this));
 
@@ -64,11 +64,11 @@ private:
   }
   void timer_callback()
   {
-    auto msg = geometry_msgs::msg::Twist();
-    msg.linear.x = - Kp_ * (x_ - xd_);
+    auto msg = geometry_msgs::msg::TwistStamped();
+    msg.twist.linear.x = - Kp_ * (x_ - xd_);
     cmd_vel_pub_->publish(msg);
   }
-  rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub_;
+  rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr cmd_vel_pub_;
   rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr xd_sub_;
   rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr scan_sub_;
   float Kp_;
@@ -84,8 +84,8 @@ int main(int argc, char * argv[])
   signal(
     SIGINT, [](int) {
       auto node = rclcpp::Node::make_shared("stop");
-      auto pub = node->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", 10);
-      pub->publish(geometry_msgs::msg::Twist());
+      auto pub = node->create_publisher<geometry_msgs::msg::TwistStamped>("/cmd_vel", 10);
+      pub->publish(geometry_msgs::msg::TwistStamped());
       rclcpp::shutdown();
     });
   // ここまで

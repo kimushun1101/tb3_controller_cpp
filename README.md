@@ -7,6 +7,8 @@ Turtlebot3 に制御則を実装するパッケージ．
 その時点でのソースコードは humble-single-file ブランチ，または GitHub Release より入手してください．
 https://github.com/kimushun1101/tb3_controller_cpp/releases/tag/v1.0.0
 
+**ROS 2 Jazzyで実行する場合には [jazzy ブランチ](https://github.com/kimushun1101/tb3_controller_cpp/tree/jazzy)のREADMEに従ってください。**
+
 ## 環境構築
 
 1. Ubuntu 22.04を用意  
